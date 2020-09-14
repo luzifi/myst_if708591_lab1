@@ -54,11 +54,13 @@ for l in [np.arange(0,32,1)]:
 for h in [np.arange(0,32,1)]:
     #Valor de la posicion de cada activo en todos los meses
     pad=np.transpose(np.array(oe_arc['Titulos'])*po[h])
-    ff = np.array(fechas['i_f'])
     o=pd.DataFrame(pad)
     df_pasiva= pd.DataFrame()
     df_pasiva['Capital']= o[h].sum()
     df_pasiva['rend']=((df_pasiva['Capital']/df_pasiva['Capital'].shift(1))-1)
+    df_pasiva['rend_acum']= df_pasiva['rend'].cumsum()
+
+
 # visualizations.py
 #1.10 Visualizacion de la evolucion del capital
 # Grafica evolucion de capital

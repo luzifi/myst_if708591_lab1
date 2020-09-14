@@ -8,3 +8,8 @@
 # -- repository: YOUR REPOSITORY URL                                                                     -- #
 # -- --------------------------------------------------------------------------------------------------- -- #
 """
+#1.10 Visualizacion de la evolucion del capital
+import matplotlib.pyplot as plt
+
+from main import df_pasiva
+df_pasiva['Capital'].plot()
