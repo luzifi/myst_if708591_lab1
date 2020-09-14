@@ -57,8 +57,9 @@ for h in [np.arange(0,32,1)]:
     o=pd.DataFrame(pad)
     df_pasiva= pd.DataFrame()
     df_pasiva['Capital']= o[h].sum()
-    df_pasiva['rend']=((df_pasiva['Capital']/df_pasiva['Capital'].shift(1))-1)
-    df_pasiva['rend_acum']= df_pasiva['rend'].cumsum()
+    # no se pudo eliminar nan
+    df_pasiva['rend']=((df_pasiva['Capital']/df_pasiva['Capital'].shift(1))-1).dropna()
+    df_pasiva['rend_acum']= (df_pasiva['rend'].cumsum()).dropna()
 
 
 # visualizations.py
