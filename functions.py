@@ -24,7 +24,7 @@ def f_fech(p_arc):
     i_f = [j.strftime('%Y-%m-%d') for j in sorted([pd.to_datetime(i[8:]).date() for i in p_arc])]
     r_f= {'i_f': i_f, 't_f': t_f}
     return r_f
-# 1.4 Vector de fechas apartir de YF
+# 1.4 Vector de tickers apartir de YF
 def gt(pa,dt):
     # Descargar y acomodar datos
     tickers = []
@@ -44,6 +44,7 @@ def gt(pa,dt):
     [global_tickers.remove(i) for i in ['MXN.MX']]
 
     return global_tickers
+# 1.5 Descarga y orden de datos historicos
 def pr(gt,iif):
     # Descarga de datos historicos de YF
     inicio = time.time()
@@ -59,4 +60,36 @@ def pr(gt,iif):
     precios = precios.reindex(sorted(precios.columns), axis=1)
 
     return precios
+
+#1.7 Ordenar y eliminar del Dataframe
+
+def oe(pa, dt):
+    pos_dat = dt[pa[0]].copy()[['Ticker', 'Nombre', 'Peso (%)']]
+    # Agregar MX
+    pos_dat['Ticker'] = pos_dat['Ticker'] + '.MX'
+    # Corregir el tickers
+    pos_dat['Ticker'] = pos_dat['Ticker'].replace('GFREGIOO.MX', 'RA.MX')
+    pos_dat['Ticker'] = pos_dat['Ticker'].replace('MEXCHEM.MX', 'ORBIA.MX')
+    pos_dat['Ticker'] = pos_dat['Ticker'].replace('LIVEPOLC.1.MX', 'LIVEPOLC-1.MX')
+    # Ordenar alfabeticamente respecto a Ticker
+    pos_dat = pos_dat.sort_values('Ticker')
+    # Resetear index  (Evita tener problemas con iloc)
+    pos_dat.reset_index(inplace=True, drop=True)
+    # Lista de activos a eliminar del archivo 1
+    c_act = ['KOFL', 'BSMXB', 'MXN']
+    i_activos = ([pos_dat[list(pos_dat['Ticker'].isin(c_act))].index])
+    # Eliminar activos del primer archivo
+    pos_dat = pos_dat.drop([7, 21, 26])
+    return pos_dat
+
+# 1.8 Jalar precios para la posicion inicial
+def pp(ps,pt,k,cc):
+    # Precios para la posicion
+    pt['Precio'] = np.array(ps.iloc[0, [i in pt['Ticker'].to_list() for i in ps.columns.to_list()]])
+
+    pt['Capital'] = pt['Peso (%)'] * k - pt['Peso (%)'] * k * cc
+    pt['Titulos'] = ((pt['Capital'] // pt['Precio']))
+    # Conversion de type str a float
+
+    return pt
 
